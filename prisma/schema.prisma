@@ -20,6 +20,8 @@ model User {
 
   firstName String?
   lastName  String?
+
+  @@map("user")
 }
 
 model Laboratory {
@@ -27,22 +29,32 @@ model Laboratory {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name    String
-  email   String
-  phone_1 String
-  phone_2 String?
-  site    String?
-  Exams    Exam[]
+  name           String
+  email          String
+  phone_1        String
+  phone_2        String?
+  site           String?
+  LaboratoryExam ExamOnLaboratory[]
+  labId  Int?
+  laboratory     Laboratory?   @relation("LaboratoryPartner", fields: [labId], references: [id])
+  partners       Laboratory[]  @relation("LaboratoryPartner")
 
-  @@map("laboratories")
+  @@map("laboratory")
+}
+
+model ExamOnLaboratory {
+  id         Int        @id @default(autoincrement())
+  labId      Int
+  laboratory Laboratory @relation(fields: [labId], references: [id])
+  examId     Int
+  exam       Exam       @relation(fields: [examId], references: [id])
 }
 
 model Exam {
-  id         Int        @id @default(autoincrement())
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  labId      Int
-  laboratory Laboratory @relation(fields: [labId], references: [id])
+  id             Int                @id @default(autoincrement())
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  LaboratoryExam ExamOnLaboratory[]
 
-  @@map("exams")
+  @@map("exam")
 }
